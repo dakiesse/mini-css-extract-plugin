@@ -391,6 +391,7 @@ class MiniCssExtractPlugin {
               return Template.asString([
                 source,
                 '',
+                'return ``',
                 `// ${pluginName} CSS loading`,
                 `var cssChunks = ${JSON.stringify(chunkMap)};`,
                 'if(installedCssChunks[chunkId]) promises.push(installedCssChunks[chunkId]);',
