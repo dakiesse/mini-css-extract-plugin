@@ -398,69 +398,9 @@ class MiniCssExtractPlugin {
                 'else if(installedCssChunks[chunkId] !== 0 && cssChunks[chunkId]) {',
                 Template.indent([
                   'promises.push(installedCssChunks[chunkId] = new Promise(function(resolve, reject) {',
-                  Template.indent([
-                    `var href = ${linkHrefPath};`,
-                    `var fullhref = ${mainTemplate.requireFn}.p + href;`,
-                    'var existingLinkTags = document.getElementsByTagName("link");',
-                    'for(var i = 0; i < existingLinkTags.length; i++) {',
                     Template.indent([
-                      'var tag = existingLinkTags[i];',
-                      'var dataHref = tag.getAttribute("data-href") || tag.getAttribute("href");',
-                      'if(tag.rel === "stylesheet" && (dataHref === href || dataHref === fullhref)) return resolve();',
+                      'return resolve();'
                     ]),
-                    '}',
-                    'var existingStyleTags = document.getElementsByTagName("style");',
-                    'for(var i = 0; i < existingStyleTags.length; i++) {',
-                    Template.indent([
-                      'var tag = existingStyleTags[i];',
-                      'var dataHref = tag.getAttribute("data-href");',
-                      'if(dataHref === href || dataHref === fullhref) return resolve();',
-                    ]),
-                    '}',
-                    'var linkTag = document.createElement("link");',
-                    this.runtimeOptions.attributes,
-                    'linkTag.rel = "stylesheet";',
-                    this.runtimeOptions.linkType
-                      ? `linkTag.type = ${JSON.stringify(
-                          this.runtimeOptions.linkType
-                        )};`
-                      : '',
-                    'var onLinkComplete = function (event) {',
-                    Template.indent([
-                      '// avoid mem leaks.',
-                      'linkTag.onerror = linkTag.onload = null;',
-                      "if (event.type === 'load') {",
-                      Template.indent(['resolve();']),
-                      '} else {',
-                      Template.indent([
-                        "var errorType = event && (event.type === 'load' ? 'missing' : event.type);",
-                        'var realHref = event && event.target && event.target.href || fullhref;',
-                        'var err = new Error("Loading CSS chunk " + chunkId + " failed.\\n(" + realHref + ")");',
-                        'err.code = "CSS_CHUNK_LOAD_FAILED";',
-                        'err.type = errorType;',
-                        'err.request = realHref;',
-                        'delete installedCssChunks[chunkId]',
-                        'linkTag.parentNode.removeChild(linkTag)',
-                        'reject(err);',
-                      ]),
-                      '}',
-                    ]),
-                    '};',
-                    'linkTag.onerror = linkTag.onload = onLinkComplete;',
-                    'linkTag.href = fullhref;',
-                    crossOriginLoading
-                      ? Template.asString([
-                          `if (linkTag.href.indexOf(window.location.origin + '/') !== 0) {`,
-                          Template.indent(
-                            `linkTag.crossOrigin = ${JSON.stringify(
-                              crossOriginLoading
-                            )};`
-                          ),
-                          '}',
-                        ])
-                      : '',
-                    this.runtimeOptions.insert,
-                  ]),
                   '}).then(function() {',
                   Template.indent(['installedCssChunks[chunkId] = 0;']),
                   '}));',
